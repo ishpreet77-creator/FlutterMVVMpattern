@@ -6,12 +6,7 @@ import 'ViewModel/viewModel.dart';
 
 import 'package:provider/provider.dart';
 
-// void main() {
-//   ChangeNotifierProvider(
-//     create: (context) => PersonViewModel(),
-//     child: MyApp(),
-//   );
-// }
+
 void main() {
   runApp(
     ChangeNotifierProvider(
