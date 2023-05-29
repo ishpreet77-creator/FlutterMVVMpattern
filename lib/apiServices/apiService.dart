@@ -7,76 +7,44 @@ import '../ApiRequest/apiRequest.dart';
 import '../ProfileModel/PersonModel.dart';
 import 'package:flutter_mvvm_pattern/ProfileModel/PersonModel.dart';
 
-// class PersonRepository {
-//   Future<PersonModel> fetchPerson() async {
-//     final response = await http.get(Uri.parse('${constant.BaseUrl}/persion'));
-//     if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 202) {
-//       final jsonData = json.decode(response.body);
-//       return PersonModel.fromJson(jsonData);
-//     } else {
-//       throw Exception('Failed to fetch person');
-//     }
-//   }
-// }
+
 
 class PersonRepository {
-  Future<PersonModel> fetchPerson() async {
+ Future<T> GET<T>(T Function(dynamic) parser) async {
     try {
-      final response = await http.get(Uri.parse('${constant.BaseUrl}') // set the timeout to 10 seconds
-          );
+      final response = await http.get(Uri.parse(constant.BaseUrl));
 
       if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 202) {
         final jsonData = json.decode(response.body);
-        return PersonModel.fromJson(jsonData);
+        return parser(jsonData);
       } else {
-        throw Exception('Failed to fetch person');
+        throw Exception('Failed to fetch data');
       }
-    } on TimeoutException catch (error) {
-      throw Exception('Request timed out: $error');
-    } catch (error) {
-      throw Exception('Failed to fetch person: $error');
+    } on Exception catch (error) {
+      throw Exception('Failed to fetch data: $error');
     }
   }
-}
 
-// class UserRepository {
-//   Future<void> createUser(User user) async {
-//     final response = await http.post(
-//       Uri.parse('${constant.BaseUrl}/users'),
-//       headers: <String, String>{
-//         'Content-Type': 'application/json; charset=UTF-8',
-//       },
-//       body: jsonEncode(user.toJson()),
-//     );
-//     if (response.statusCode == 201) {
-//       print("data:--   ${response.body}");
-//       print('User created successfully!');
-//     } else {
-//       throw Exception('Failed to create user');
-//     }
-//   }
-// }
+  
 
-class UserRepository {
-  Future<void> createUser(User user) async {
+   Future<T> postData<T>(String apiUrl, dynamic data, T Function(dynamic) parser) async {
     try {
       final response = await http.post(
-        Uri.parse('${constant.BaseUrl}/users'),
+        Uri.parse(apiUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(user.toJson()),
-        // timeout: const Duration(seconds: 10),
+        body: jsonEncode(data),
       );
+
       if (response.statusCode == 201) {
-        print("data:--   ${response.body}");
-        print('User created successfully!');
+        final jsonData = json.decode(response.body);
+        return parser(jsonData);
       } else {
-        throw Exception('Failed to create user');
+        throw Exception('Failed to create data');
       }
-    } catch (error) {
-      print('Error creating user: $error');
-      throw Exception('Failed to create user: $error');
+    } on Exception catch (error) {
+      throw Exception('Failed to create data: $error');
     }
   }
 }

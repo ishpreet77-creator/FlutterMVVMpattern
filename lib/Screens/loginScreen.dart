@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mvvm_pattern/ApiRequest/apiRequest.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../ViewModel/viewModel.dart';
@@ -51,7 +52,10 @@ class MyLoginPageState extends State<MyLoginPage> {
                     Text("data:-   ${personViewModel.personModel?.birthYear}"),
                     ElevatedButton(
                       onPressed: () {
-                        personViewModel.fetchPerson();
+                        //  hit get api with view model
+                        personViewModel.fetchPersonData();
+                        //hit api with api request
+                        // personViewModel.createUser(User(name: name, email: email));
                       },
                       child: Text('Fetch Data'),
                     ),

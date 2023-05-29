@@ -4,49 +4,7 @@ import '../ApiRequest/apiRequest.dart';
 import '../ProfileModel/PersonModel.dart';
 import '../apiServices/apiService.dart';
 
-// class PersonViewModel extends ChangeNotifier {
-//   PersonModel? _personModel;
-//   final _repository = PersonRepository();
 
-//   PersonModel? get personModel => _personModel;
-
-//   Future<void> fetchPerson() async {
-//     try {
-//       final person = await _repository.fetchPerson();
-//       _personModel = person;
-//       notifyListeners();
-//     } catch (error) {
-//       print('Error fetching person: $error');
-//     }
-//   }
-// }
-
-// class PersonViewModel extends ChangeNotifier {
-//   PersonModel? _personModel;
-//   final _repository = PersonRepository();
-
-//   bool _isLoading = false;
-//   bool get isLoading => _isLoading;
-//   notifyListeners();
-//   PersonModel? get personModel => _personModel;
-
-//   Future<void> fetchPerson() async {
-//     try {
-//       _isLoading = true; // Set isLoading to true while the data is being fetched
-//       notifyListeners();
-
-//       final person = await _repository.fetchPerson();
-//       _personModel = person;
-//       notifyListeners();
-//     } catch (error) {
-//       print('Error fetching person: $error');
-//     } finally {
-//       _isLoading = false; // Set isLoading to false once the data is fetched
-//       notifyListeners();
-//     }
-//   }
-
-// }
 
 class PersonViewModel extends ChangeNotifier {
   PersonModel? _personModel;
@@ -56,34 +14,43 @@ class PersonViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   PersonModel? get personModel => _personModel;
 
-  Future<void> fetchPerson() async {
+  Future<void> fetchPersonData() async {
     try {
       _isLoading = true;
       notifyListeners();
-
-      final person = await _repository.fetchPerson();
+      final person = await _repository.GET(
+        (jsonData) => PersonModel.fromJson(jsonData),
+      );
       _personModel = person;
+    
+      print('Fetched person: ${person.name}');
     } catch (error) {
       print('Error fetching person: $error');
+    
     } finally {
       _isLoading = false;
       notifyListeners(); // move notifyListeners() inside the try-finally block
     }
   }
-}
 
-class UserViewModel extends ChangeNotifier {
-  final _repository = UserRepository();
-
-  Future<void> createUser(String name, String email) async {
-    // final user = User(name: name, email: email);
-    final user = User(name: name, email: email);
-
+  
+   Future<void> createUser(User user) async {
     try {
-      await _repository.createUser(user);
+      _isLoading = true;
+      notifyListeners();
+      
+      _repository.postData('{constant.BaseUrl}/users', user.toJson(), (jsonData) {
+        // Handle the parsed response data
+          print(jsonData);
+      });
+      
       print('User created successfully!');
+    
     } catch (error) {
       print('Error creating user: $error');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }
